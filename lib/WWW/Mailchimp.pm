@@ -5,7 +5,7 @@ use JSON;
 use URI;
 use URI::QueryParam;
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 $VERSION = eval $VERSION;
 
 =head1 NAME
@@ -17,12 +17,17 @@ WWW::Mailchimp - Perl wrapper around the Mailchimp v1.3 API
   use strict;
   use WWW::Mailchimp
 
-  my $mailchimp = WWW::Mailchimp->new(apikey => $apikey); # defaults ( datacenter => 'us1', timeout => 5, output_format => 'json', api_version => 1.3 )
+  my $mailchimp = WWW::Mailchimp->new(apikey => $apikey);
+  # defaults ( datacenter => 'us1', timeout => 5, output_format => 'json', api_version => 1.3 )
 
   my $campaigns = $mailchimp->campaigns;
   my $lists = $mailchimp->lists;
   my $subscribers = $mailchimp->listMembers( $lists->[0]->{id} );
-  my $ok = $mailchimp->listSubscribe( id => $lists->[0]->{id}, email_address => 'foo@bar.com', update_existing => 1, merge_vars => [ FNAME => 'foo', LNAME => 'bar' ] );
+  my $ok = $mailchimp->listSubscribe( id => $lists->[0]->{id}, 
+                                      email_address => 'foo@bar.com',
+                                      update_existing => 1,
+                                      merge_vars => [ FNAME => 'foo',
+                                                      LNAME => 'bar' ] );
 
 =head1 DESCRIPTION
 
@@ -35,7 +40,8 @@ Each key/value pair becomes part of a query string, for example:
 
 results in the query string
 
-  ?method=listSubscribe&id=1&email_address=foo@bar.com # apikey, output, etc are tacked on by default. This is also uri_escaped
+  ?method=listSubscribe&id=1&email_address=foo@bar.com
+  # apikey, output, etc are tacked on by default. This is also uri_escaped
 
 =head1 BUGS
 
@@ -52,6 +58,8 @@ Mail::Chimp::API - Perl wrapper around the Mailchimp v1.2 API using XMLRPC
 =head1 AUTHOR
 
 Justin Hunter <justin.d.hunter@gmail.com>
+
+Fayland Lam
 
 =head1 COPYRIGHT AND LICENSE
 
@@ -70,7 +78,7 @@ has api_version => (
 );
 
 has datacenter => (
-  is => 'ro',
+  is => 'rw',
   isa => 'Str',
   lazy => 1,
   default => 'us1',
@@ -80,6 +88,11 @@ has apikey => (
   is => 'ro',
   isa => 'Str',
   required => 1,
+  trigger => sub {
+    my ($self, $val) = @_;
+    my ($datacenter) = ($val =~ /\-(\w+)$/);
+    $self->datacenter($datacenter)
+  },
 );
 
 has api_url => (
@@ -116,9 +129,17 @@ sub _build_lwp {
   my $ua = LWP::UserAgent->new( timeout => $self->timeout, agent => __PACKAGE__ . ' ' . $VERSION );
 }
 
+has 'json' => (
+    is => 'ro',
+    isa => 'JSON',
+    lazy_build => 1,
+);
+
+sub _build_json { JSON->new->allow_nonref }
+
 sub _build_query_args {
   my ($self, %args) = @_;
-  my %merge_vars = @{delete $args{merge_vars}};
+  my %merge_vars = @{delete $args{merge_vars} || []};
   for my $var (keys %merge_vars) {
     if (ref($merge_vars{$var}) eq 'ARRAY') {
       my $count = 0; 
@@ -144,7 +165,7 @@ sub _request {
   my $uri = $self->_build_query_args(method => $method, %args);
 
   my $response = $self->request( HTTP::Request->new( GET => $uri->canonical ) );
-  return $response->is_success ? from_json($response->content) : $response->status_line;
+  return $response->is_success ? $self->json->decode($response->content) : $response->status_line;
 }
 
 my @api_methods = qw(
