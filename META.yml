@@ -28,4 +28,4 @@ resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=WWW-Mailchimp
   license: http://dev.perl.org/licenses/
   repository: https://github.com/arcanez/www-mailchimp
-version: 0.005
+version: 0.006
