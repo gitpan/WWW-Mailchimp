@@ -41,7 +41,7 @@
          }
       }
    },
-   "release_status" : "stable",
+   "release_status" : "testing",
    "resources" : {
       "bugtracker" : {
          "web" : "http://rt.cpan.org/NoAuth/Bugs.html?Dist=WWW-Mailchimp"
@@ -53,5 +53,5 @@
          "url" : "https://github.com/arcanez/www-mailchimp"
       }
    },
-   "version" : "0.006"
+   "version" : "0.006_01"
 }
