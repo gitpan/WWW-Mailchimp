@@ -35,6 +35,7 @@
             "JSON" : "0",
             "LWP" : "0",
             "Moo" : "1.000007",
+            "MooX::Types::MooseLike" : "0.16",
             "PHP::HTTPBuildQuery" : "0",
             "Sub::Name" : "0.05",
             "URI" : "0",
@@ -54,5 +55,5 @@
          "url" : "https://github.com/arcanez/www-mailchimp"
       }
    },
-   "version" : "0.006_03"
+   "version" : "0.006_04"
 }
