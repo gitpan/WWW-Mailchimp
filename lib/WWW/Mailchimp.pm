@@ -7,7 +7,7 @@ use PHP::HTTPBuildQuery qw(http_build_query);
 use MooX::Types::MooseLike::Base qw(Int InstanceOf Num Str);
 use Sub::Name;
 
-our $VERSION = '0.007';
+our $VERSION = '0.007_01';
 $VERSION = eval $VERSION;
 
 =head1 NAME
@@ -269,11 +269,9 @@ my @api_methods = qw(
   templates
 );
 
-sub BUILD {
-  no strict 'refs';
-  for my $method (@api_methods) {
-    *{$method} = subname $method => sub { shift->_request($method, @_) };
-  }
+no strict 'refs';
+for my $method (@api_methods) {
+  *{$method} = subname $method => sub { shift->_request($method, @_) };
 }
 
 1;
