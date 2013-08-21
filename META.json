@@ -4,7 +4,7 @@
       "Justin Hunter <justin.d.hunter@gmail.com>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "ExtUtils::MakeMaker version 6.66, CPAN::Meta::Converter version 2.131490",
+   "generated_by" : "ExtUtils::MakeMaker version 6.72, CPAN::Meta::Converter version 2.132140",
    "license" : [
       "perl_5"
    ],
@@ -56,5 +56,5 @@
          "url" : "https://github.com/arcanez/www-mailchimp"
       }
    },
-   "version" : "0.008"
+   "version" : "0.009"
 }
